@@ -1,6 +1,7 @@
 import React from "react";
-import { useCurrentFrame, interpolate, Easing } from "remotion";
+import { useCurrentFrame, interpolate, Easing, Img } from "remotion";
 import { getPopSpring } from "../utils/PaperSOPEasing";
+import handPanImg from "../../assets/hand-pan.jpg";
 
 interface SOPNodeProps {
   letter: string;
@@ -114,13 +115,22 @@ export const SOPNode: React.FC<SOPNodeProps> = ({
                   style={{ transform: "rotate(-90deg)", transformOrigin: "50% 50%" }}
                 />
                 
-                {/* The Pen SVG Icon tracing the path */}
+                {/* The Hand with Pencil tracing the path */}
                 {drawProgress > 0 && drawProgress < 1 && (
-                  <g style={{ transform: `translate(${75 + penX}px, ${75 + penY}px) rotate(45deg)` }}>
-                    {/* Hand-drawn style simple pen/pencil marker */}
-                    <path d="M0,0 L4,-12 L12,-4 Z" fill="#ffaa00" />
-                    <rect x="4" y="-22" width="8" height="18" fill="#ffffff" stroke="#ffaa00" strokeWidth="2" transform="rotate(45, 8, -13)" />
-                    <circle cx="0" cy="0" r="3" fill="#ff3131" />
+                  <g style={{ transform: `translate(${75 + penX}px, ${75 + penY}px)` }}>
+                    <foreignObject x="0" y="0" width="120" height="120" style={{ pointerEvents: "none" }}>
+                      <Img 
+                        src={handPanImg} 
+                        style={{ 
+                          width: "100%", 
+                          height: "100%", 
+                          objectFit: "contain",
+                          mixBlendMode: "multiply",
+                          filter: "brightness(0.9) contrast(1.2)",
+                          transform: "translate(-10px, -20px)" 
+                        }} 
+                      />
+                    </foreignObject>
                   </g>
                 )}
               </svg>
