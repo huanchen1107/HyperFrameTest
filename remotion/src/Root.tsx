@@ -8,6 +8,7 @@ import { PaperSOP } from "./PaperSOP";
 import { Top3Dark } from "./Top3/Top3Dark";
 import { Top3Minimal } from "./Top3/Top3Minimal";
 import { Top3Epic } from "./Top3/Top3Epic";
+import { Top3Typewriter } from "./Top3/Top3Typewriter";
 
 // Each <Composition> is an entry in the sidebar!
 
@@ -49,6 +50,14 @@ export const RemotionRoot: React.FC = () => {
       <Composition
         id="Top3Epic"
         component={Top3Epic}
+        durationInFrames={450}
+        fps={30}
+        width={1920}
+        height={1080}
+      />
+      <Composition
+        id="Top3Typewriter"
+        component={Top3Typewriter}
         durationInFrames={450}
         fps={30}
         width={1920}
