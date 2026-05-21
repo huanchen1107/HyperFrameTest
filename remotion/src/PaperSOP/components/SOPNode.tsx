@@ -1,5 +1,5 @@
 import React from "react";
-import { useCurrentFrame, interpolate } from "remotion";
+import { useCurrentFrame, interpolate, Easing } from "remotion";
 import { getPopSpring } from "../utils/PaperSOPEasing";
 
 interface SOPNodeProps {
@@ -69,6 +69,66 @@ export const SOPNode: React.FC<SOPNodeProps> = ({
         zIndex: status === "aligned" ? 10 : 2,
       }}
     >
+      {/* Animated Pen Drawing effect */}
+      {frame >= startFrame && (
+        <div style={{ position: "absolute", top: 45, left: 45 }}>
+          {(() => {
+            const drawProgress = interpolate(frame - startFrame, [0, 25], [0, 1], {
+              extrapolateLeft: "clamp",
+              extrapolateRight: "clamp",
+              easing: Easing.out(Easing.quad),
+            });
+
+            const radius = 60;
+            const circumference = 2 * Math.PI * radius;
+            const strokeDashoffset = circumference * (1 - drawProgress);
+            
+            // Start from top (-90 deg), go clockwise
+            const angle = drawProgress * 2 * Math.PI - Math.PI / 2;
+            const penX = radius * Math.cos(angle);
+            const penY = radius * Math.sin(angle);
+
+            return (
+              <svg 
+                style={{ 
+                  position: "absolute", 
+                  top: -75, 
+                  left: -75, 
+                  width: 150, 
+                  height: 150, 
+                  pointerEvents: "none", 
+                  zIndex: 15 
+                }}
+              >
+                {/* The drawn circle */}
+                <circle 
+                  cx={75} 
+                  cy={75} 
+                  r={radius} 
+                  fill="none" 
+                  stroke={status === "aligned" ? "#ff3131" : "#ffaa00"} 
+                  strokeWidth={4} 
+                  strokeDasharray={circumference}
+                  strokeDashoffset={strokeDashoffset}
+                  strokeLinecap="round"
+                  style={{ transform: "rotate(-90deg)", transformOrigin: "50% 50%" }}
+                />
+                
+                {/* The Pen SVG Icon tracing the path */}
+                {drawProgress > 0 && drawProgress < 1 && (
+                  <g style={{ transform: `translate(${75 + penX}px, ${75 + penY}px) rotate(45deg)` }}>
+                    {/* Hand-drawn style simple pen/pencil marker */}
+                    <path d="M0,0 L4,-12 L12,-4 Z" fill="#ffaa00" />
+                    <rect x="4" y="-22" width="8" height="18" fill="#ffffff" stroke="#ffaa00" strokeWidth="2" transform="rotate(45, 8, -13)" />
+                    <circle cx="0" cy="0" r="3" fill="#ff3131" />
+                  </g>
+                )}
+              </svg>
+            );
+          })()}
+        </div>
+      )}
+
       {/* Dynamic Glow Outer Ring */}
       <div
         style={{

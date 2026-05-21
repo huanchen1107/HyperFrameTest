@@ -12,17 +12,17 @@ export const RemotionRoot: React.FC = () => {
   return (
     <>
       <Composition
-        id="PaperSOP"
-        component={PaperSOP}
-        durationInFrames={1110}
+        id="LoveClip"
+        component={LoveClip}
+        durationInFrames={360}
         fps={30}
         width={1920}
         height={1080}
       />
       <Composition
-        id="LoveClip"
-        component={LoveClip}
-        durationInFrames={360}
+        id="PaperSOP"
+        component={PaperSOP}
+        durationInFrames={1110}
         fps={30}
         width={1920}
         height={1080}
