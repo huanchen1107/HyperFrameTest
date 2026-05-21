@@ -62,8 +62,30 @@ export const PaperSOP: React.FC = () => {
     easing: Easing.back(1.5),
   });
 
-  // --- Background Cinematic Zoom ---
-  const bgScale = interpolate(frame, [0, 1110], [1, 1.05]);
+  // --- Camera Pan and Zoom ---
+  const globalScale = interpolate(
+    frame,
+    [0, 230, 250, 650, 670],
+    [1, 1, 1.4, 1.4, 1],
+    { extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: Easing.inOut(Easing.quad) }
+  );
+
+  const cx = 1920 / 2;
+  const panX = interpolate(
+    frame,
+    [230, 250, 290, 310, 380, 400, 470, 490, 530, 550, 590, 610, 650, 670],
+    [
+      0, 
+      cx - 210, cx - 210, // A
+      cx - 510, cx - 510, // B
+      cx - 810, cx - 810, // C
+      cx - 1110, cx - 1110, // D
+      cx - 1410, cx - 1410, // E
+      cx - 1710, cx - 1710, // F
+      0 // Return to center
+    ],
+    { extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: Easing.inOut(Easing.quad) }
+  );
 
   return (
     <AbsoluteFill style={{ overflow: "hidden" }}>
@@ -74,20 +96,29 @@ export const PaperSOP: React.FC = () => {
         trimAfter={149 * fps} 
       />
 
-      {/* Static Background Image (Extracted Frame) */}
-      <Img 
-        src={staticFile("static_background.png")} 
+      {/* --- CAMERA CONTAINER --- */}
+      <div
         style={{
+          position: "absolute",
           width: "100%",
           height: "100%",
-          objectFit: "cover",
-          position: "absolute",
-          top: 0,
-          left: 0,
-          transform: `scale(${bgScale})`,
+          transform: `scale(${globalScale}) translate(${panX / globalScale}px, 0px)`,
           transformOrigin: "center center",
+          willChange: "transform",
         }}
-      />
+      >
+        {/* Static Background Image (Extracted Frame) */}
+        <Img 
+          src={staticFile("static_background.png")} 
+          style={{
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            position: "absolute",
+            top: 0,
+            left: 0,
+          }}
+        />
 
       {/* 1. Holographic Grid Blueprint Canvas (Semi-transparent overlay) */}
       <div style={{ opacity: 0.15, pointerEvents: "none" }}>
@@ -376,6 +407,9 @@ export const PaperSOP: React.FC = () => {
           </div>
         </AbsoluteFill>
       )}
+      
+      {/* --- END CAMERA CONTAINER --- */}
+      </div>
 
       {/* Ambient Lens Vignette Layer */}
       <AbsoluteFill
