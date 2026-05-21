@@ -299,7 +299,6 @@ echo "    render deterministic compositions based on the Gist."
 echo "✨=======================================================✨"
 echo ""
 stty icrnl 2>/dev/null || true
-# npx -y @anthropic-ai/claude-code
-echo "Skipping interactive Claude Code launch inside agent execution."
+npx -y @anthropic-ai/claude-code
 
 
