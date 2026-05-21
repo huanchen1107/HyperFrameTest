@@ -118,7 +118,7 @@ export const SOPNode: React.FC<SOPNodeProps> = ({
                 {/* The Hand with Pencil tracing the path */}
                 {drawProgress > 0 && drawProgress < 1 && (
                   <g style={{ transform: `translate(${75 + penX}px, ${75 + penY}px)` }}>
-                    <foreignObject x="0" y="0" width="120" height="120" style={{ pointerEvents: "none" }}>
+                    <foreignObject x="-60" y="-60" width="120" height="120" style={{ pointerEvents: "none" }}>
                       <Img 
                         src={handPanImg} 
                         style={{ 
@@ -126,8 +126,7 @@ export const SOPNode: React.FC<SOPNodeProps> = ({
                           height: "100%", 
                           objectFit: "contain",
                           mixBlendMode: "multiply",
-                          filter: "brightness(0.9) contrast(1.2)",
-                          transform: "translate(-10px, -20px)" 
+                          filter: "brightness(0.9) contrast(1.2)"
                         }} 
                       />
                     </foreignObject>
