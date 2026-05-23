@@ -110,6 +110,8 @@ def main():
         
     if f"## {today_str} (工作階段自動摘要)" in content:
         print("ℹ️ 今日的自動摘要已存在於 log.md 中，跳過附加以免重複。")
+        # Update README.md anyway
+        update_readme(today_str, actions, git_recent_commits)
         return
         
     try:
@@ -118,6 +120,53 @@ def main():
         print("✅ 成功將自動摘要附加至 log.md！")
     except Exception as e:
         print(f"⚠️ 寫入 log.md 失敗: {e}")
+
+    # 4. Also update README.md with latest status
+    update_readme(today_str, actions, git_recent_commits)
+
+def update_readme(today_str, actions, git_recent_commits):
+    print("📝 正在自動更新 README.md...")
+    readme_path = "README.md"
+    if not os.path.exists(readme_path):
+        return
+        
+    try:
+        with open(readme_path, "r", encoding="utf-8") as f:
+            content = f.read()
+            
+        status_header = "## 📍 Latest Status"
+        
+        status_lines = [
+            status_header,
+            f"\nLast updated on **{today_str}** via `./ending.sh`.\n",
+        ]
+        
+        if actions:
+            status_lines.append("### Recent Actions:")
+            for act in actions:
+                status_lines.append(f"- {act}")
+            status_lines.append("")
+            
+        if git_recent_commits:
+            status_lines.append("### Recent Commits:")
+            for line in git_recent_commits.split("\n")[:2]:
+                status_lines.append(f"- `{line}`")
+            status_lines.append("")
+            
+        status_block = "\n".join(status_lines)
+        
+        # If the header exists, replace everything from it
+        if status_header in content:
+            parts = content.split(status_header)
+            new_content = parts[0] + status_block
+        else:
+            new_content = content.rstrip() + "\n\n" + status_block
+            
+        with open(readme_path, "w", encoding="utf-8") as f:
+            f.write(new_content)
+        print("✅ 成功更新 README.md！")
+    except Exception as e:
+        print(f"⚠️ 更新 README.md 失敗: {e}")
 
 if __name__ == "__main__":
     main()
