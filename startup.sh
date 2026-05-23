@@ -7,6 +7,7 @@ echo "=============================="
 echo "Step 1: 環境檢查 (Environment Check)"
 echo "=============================="
 PASS=true
+CLIENT="${AI_CLIENT:-codex}"
 
 check_cmd() {
     if command -v "$1" &>/dev/null; then
@@ -119,22 +120,41 @@ echo "🧭 AI Agent Rules："
 [ -f ".agents/skills/karpathy-guidelines/SKILL.md" ] && echo "  ✅ Codex Karpathy skill found" || echo "  ⚠️  .agents/skills/karpathy-guidelines/SKILL.md not found"
 
 echo ""
+echo "🤖 AI Client："
+echo "  ℹ️  AI_CLIENT=${CLIENT} (set AI_CLIENT=claude to use Claude Code)"
+
+echo ""
 echo "🔑 API Keys (.env)："
 if [ -f ".env" ]; then
     source .env 2>/dev/null
-    [ -n "$ANTHROPIC_API_KEY" ] && echo "  ✅ ANTHROPIC_API_KEY 已設定 (${ANTHROPIC_API_KEY:0:8}...)" || { echo "  ❌ ANTHROPIC_API_KEY 未設定"; PASS=false; }
+    if [ "$CLIENT" = "claude" ]; then
+        [ -n "$ANTHROPIC_API_KEY" ] && echo "  ✅ ANTHROPIC_API_KEY 已設定 (${ANTHROPIC_API_KEY:0:8}...)" || { echo "  ❌ ANTHROPIC_API_KEY 未設定"; PASS=false; }
+    else
+        [ -n "$OPENAI_API_KEY" ] && echo "  ✅ OPENAI_API_KEY 已設定 (${OPENAI_API_KEY:0:8}...)" || { echo "  ❌ OPENAI_API_KEY 未設定"; PASS=false; }
+    fi
 else
-    echo "  ❌ .env 檔案不存在！請建立並填入 ANTHROPIC_API_KEY"
+    if [ "$CLIENT" = "claude" ]; then
+        echo "  ❌ .env 檔案不存在！請建立並填入 ANTHROPIC_API_KEY"
+    else
+        echo "  ❌ .env 檔案不存在！請建立並填入 OPENAI_API_KEY"
+    fi
     PASS=false
 fi
 
 echo ""
 echo "🌐 網路連線："
-HTTP=$(curl -s --max-time 5 -o /dev/null -w "%{http_code}" "https://api.anthropic.com")
-if [[ "$HTTP" =~ ^[234] ]]; then
-    echo "  ✅ Anthropic API 可連線 (HTTP $HTTP)"
+if [ "$CLIENT" = "claude" ]; then
+    API_URL="https://api.anthropic.com"
+    API_NAME="Anthropic API"
 else
-    echo "  ❌ Anthropic API 連線失敗 (HTTP $HTTP)"
+    API_URL="https://api.openai.com/v1/models"
+    API_NAME="OpenAI API"
+fi
+HTTP=$(curl -s --max-time 5 -o /dev/null -w "%{http_code}" "$API_URL")
+if [[ "$HTTP" =~ ^[234] ]]; then
+    echo "  ✅ ${API_NAME} 可連線 (HTTP $HTTP)"
+else
+    echo "  ❌ ${API_NAME} 連線失敗 (HTTP $HTTP)"
     PASS=false
 fi
 
@@ -285,11 +305,11 @@ echo ""
 echo "🤖 嗨，AI 助手！請閱讀上方的開發日誌，並總結目前的進度，然後告訴我接下來可以開始哪些任務 (Tasks to start)。"
 
 # =========================================================
-# Step 4: 啟動 Claude Code (Launch)
+# Step 4: 啟動 AI CLI (Launch)
 # =========================================================
 echo ""
 echo "=============================="
-echo "Step 4: 啟動 Claude Code (Launch)"
+echo "Step 4: 啟動 AI CLI (Launch)"
 echo "=============================="
 echo ""
 echo "✨=======================================================✨"
@@ -299,6 +319,9 @@ echo "    render deterministic compositions based on the Gist."
 echo "✨=======================================================✨"
 echo ""
 stty icrnl 2>/dev/null || true
-npx -y @anthropic-ai/claude-code
-
+if [ "$CLIENT" = "claude" ]; then
+    npx -y @anthropic-ai/claude-code
+else
+    codex
+fi
 

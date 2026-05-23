@@ -1,31 +1,24 @@
 # test-2026.5.21remotiontest
 
-> **MEMO (2026.05.21)**: This project runs via the official **Claude Code** client with API keys configured in `.env`.
-> Simply run `./startup.sh` to start.
+Unified project docs:
+- `README.md`: setup and workflow
+- `project_initial.md`: current goals and scope
+- `log.md`: execution history and status
 
-## 🚀 Quick Start
+## Quick Start
 
 ```bash
-./startup.sh   # Initialize project + launch Claude Code
-./ending.sh    # Commit, push, and finalize session
+./startup.sh
+./ending.sh
 ```
 
-## 🤖 How it Works
+## Runtime
 
-`startup.sh` → reads `project_initial.md` → launches Claude Code CLI.
+- Default client: `codex`
+- Required key: `OPENAI_API_KEY` in `.env`
+- Optional Claude mode: set `AI_CLIENT=claude` and `ANTHROPIC_API_KEY`
 
-## 📁 Project Structure
+## Current Scope
 
-```
-.
-├── startup.sh         # Session start: reads project goals + launches Claude Code CLI
-├── ending.sh          # Session end: update logs + commit + push
-├── .env               # API keys (gitignored)
-├── log.md          # Development log
-└── user/dialog.md     # Auto-reconstructed conversation history
-```
-
-## 🛠 Prerequisites
-
-- `npx` / Node.js — for Claude Code CLI
-- `ANTHROPIC_API_KEY` set in `.env`
+This workspace has been cleaned of Remotion assets and related local skills.
+Use `project_initial.md` as the single source of truth for next implementation goals.
